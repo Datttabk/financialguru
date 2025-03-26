@@ -14,7 +14,7 @@ class FinancialGuru:
         self.nifty50 = self._get_index_data('^NSEI')
         self.risk_free_rate = 0.07
         self.tax_slabs = {
-            'IND': [(250000, 0), (500000, 0.05), 
+            'IND': [(250000, 0), (500000, 0.05),
                    (1000000, 0.2), (float('inf'), 0.3)]
         }
         self.gold_price = self._get_gold_price()
@@ -145,8 +145,8 @@ class FinancialGuru:
             model = genai.GenerativeModel('gemini-pro')
             
             market_status = (
-                
-                 
+                f"Nifty 50: {self._safe_nifty_value()}\n"
+                f"Gold: ₹{self.gold_price:,.2f}/10g\n"
                 f"Bitcoin: ₹{self.btc_price:,.2f}\n"
                 f"Risk-Free Rate: {self.risk_free_rate*100}%"
             )
@@ -190,20 +190,21 @@ def main():
     # Real-time Dashboard
     with st.container():
         cols = st.columns(4)
-        cols[0].metric("Nifty 50", guru._safe_nifty_value())
-        cols[1].metric("Gold (10g)", f"₹{guru.gold_price:,.2f}" if not np.isnan(guru.gold_price) else "N/A")
+        cols[0].metric("Nifty 50", guru._safe_nifty_value(), help="Live Nifty 50 Index Value")
+        gold_value = f"₹{guru.gold_price:,.2f}/10g" if not np.isnan(guru.gold_price) else "N/A"
+        cols[1].metric("Gold (10g)", gold_value)
         cols[2].metric("Bitcoin", f"₹{guru.btc_price:,.2f}" if not np.isnan(guru.btc_price) else "N/A")
         cols[3].metric("Risk Profile", f"{guru.risk_profile}/10")
 
     # Main Interface
     tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(
-        ["🏡 Goal Planner", "📈 SIP Calculator", "📉 SWP Calculator", 
+        ["🏡 Goal Planner", "📈 SIP Calculator", "📉 SWP Calculator",
          "💰 Tax Planner", "🏦 Loan Calculator", "🤖 AI Advisor"]
     )
 
     with tab1:
         st.subheader("Goal-Based Financial Planning")
-        goal_type = st.selectbox("Select Goal Type", 
+        goal_type = st.selectbox("Select Goal Type",
                                ["Education", "Retirement", "Home", "Travel"])
         current_cost = st.number_input("Current Cost (₹)", value=1000000)
         years = st.slider("Years Until Goal", 1, 30, 10)
