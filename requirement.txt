@@ -6,4 +6,5 @@ requests
 google-generativeai
 beautifulsoup4
 fpdf
+gunicorn==23.0.0
 
